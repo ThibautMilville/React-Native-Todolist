@@ -5,6 +5,7 @@ import { styles } from "./assets/css/app.style";
 // Components
 import { Header } from "./components/Header/Header";
 import { CardToDo } from "./components/CardToDo/CardToDo";
+import { TabBottomMenu } from "./components/TabBottomMenu/TabBottomMenu";
 
 export default function App() {
   const [toDoList, setToDoList] = useState([
@@ -17,9 +18,10 @@ export default function App() {
     { id: 7, title: "Faire les courses", isCompleted: true },
     { id: 8, title: "Appeler le vétérinaire", isCompleted: true },
   ]);
+  const [selectedTabName, setSelectedTabName] = useState("Tous");
 
   function renderToDoList() {
-    return toDoList.map((todo) => <CardToDo toDo={todo} onPress={updateTodo} />);
+    return toDoList.map((todo) => <CardToDo toDo={todo} key={todo.id} onPress={updateTodo} />);
   }
 
   // Get todo data (one element) and update its isCompleted property by retrieving its index in the toDoList array
@@ -41,7 +43,7 @@ export default function App() {
           <ScrollView>{renderToDoList()}</ScrollView>
         </View>
         <View style={styles.footer}>
-          <Text>Footer</Text>
+          <TabBottomMenu onPress={setSelectedTabName} selectedTabName={selectedTabName} />
         </View>
       </SafeAreaView>
     </SafeAreaProvider>
