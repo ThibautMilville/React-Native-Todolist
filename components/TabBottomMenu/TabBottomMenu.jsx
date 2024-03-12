@@ -3,30 +3,42 @@ import React from "react";
 import { View, TouchableOpacity, Text } from "react-native";
 import { styles } from "./TabBottomMenu.style";
 
-export function TabBottomMenu({ selectedTabName, onPress }) {
+export function TabBottomMenu({ selectedTabName, onPress, toDoList }) {
   function getTextStyle(tabName) {
     return {
+      textAlign: "center",
       fontWeight: "bold",
-      width: '100%',
-      height: '75%',
-      textAlign: 'center',
-      textAlignVertical: 'center',
+      width: "100%",
+      height: "75%",
       color: tabName === selectedTabName ? "#2F76E5" : "black",
       borderBottomWidth: tabName === selectedTabName ? 5 : 0,
+      borderBottomLeftRadius: 6,
+      borderBottomRightRadius: 6,
     };
   }
 
+  // Count the number of toDos by status
+  const countByStatus = toDoList.reduce(
+    (acc, unTodo) => {
+      unTodo.isCompleted ? acc.done++ : acc.inProgress++;
+      return acc;
+    },
+    { all: toDoList.length, inProgress: 0, done: 0 }
+  );
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity style={styles.button} onPress={() => onPress("all")}>
-        <Text style={getTextStyle("all")}>All</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => onPress("inProgress")}>
-        <Text style={getTextStyle("inProgress")}>In progress</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.button} onPress={() => onPress("done")}>
-        <Text style={getTextStyle("done")}>Done</Text>
-      </TouchableOpacity>
+      <View style={styles.filterBox}>
+        <TouchableOpacity style={styles.button} onPress={() => onPress("all")}>
+          <Text style={getTextStyle("all")}>All ({countByStatus.all})</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => onPress("inProgress")}>
+          <Text style={getTextStyle("inProgress")}>In progress ({countByStatus.inProgress})</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => onPress("done")}>
+          <Text style={getTextStyle("done")}>Done ({countByStatus.done})</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 }

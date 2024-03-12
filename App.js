@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Text, View, ScrollView } from "react-native";
+import { View, ScrollView, Alert } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import { styles } from "./assets/css/app.style";
 // Components
@@ -18,10 +18,12 @@ export default function App() {
     { id: 7, title: "Faire les courses", isCompleted: true },
     { id: 8, title: "Appeler le vétérinaire", isCompleted: true },
   ]);
-  const [selectedTabName, setSelectedTabName] = useState("Tous");
+  const [selectedTabName, setSelectedTabName] = useState("all");
 
+  // Render the filtered list of todos according to the selected tab
   function renderToDoList() {
-    return toDoList.map((todo) => <CardToDo toDo={todo} key={todo.id} onPress={updateTodo} />);
+    let filteredList = getFilteredList();
+    return filteredList.map((todo) => <CardToDo toDo={todo} key={todo.id} onPress={updateTodo} onLongPress={deleteTodo} />);
   }
 
   // Get todo data (one element) and update its isCompleted property by retrieving its index in the toDoList array
@@ -31,6 +33,39 @@ export default function App() {
     const updatedTodoList = [...toDoList];
     updatedTodoList[indexToUpdate] = updatedTodo;
     setToDoList(updatedTodoList);
+  }
+
+  // Delete a todo from the toDoList array
+  function deleteTodo(todo) {
+    Alert.alert("Suppression", "Supprimer cette tâche ?", [
+      {
+        text: "Annuler",
+        style: "cancel",
+      },
+      {
+        text: "Supprimer",
+        style: "destructive",
+        onPress: () => {
+          const deleteTodo = { ...todo };
+          const indexToDelete = toDoList.findIndex((todo) => todo.id === deleteTodo.id);
+          const updatedTodoList = [...toDoList];
+          updatedTodoList.splice(indexToDelete, 1);
+          setToDoList(updatedTodoList);
+        },
+      },
+    ]);
+  }
+
+  // Filter function to display the right list of todos according to the selected tab
+  function getFilteredList() {
+    switch (selectedTabName) {
+      case "all":
+        return toDoList;
+      case "inProgress":
+        return toDoList.filter((todo) => !todo.isCompleted);
+      case "done":
+        return toDoList.filter((todo) => todo.isCompleted);
+    }
   }
 
   return (
@@ -43,7 +78,7 @@ export default function App() {
           <ScrollView>{renderToDoList()}</ScrollView>
         </View>
         <View style={styles.footer}>
-          <TabBottomMenu onPress={setSelectedTabName} selectedTabName={selectedTabName} />
+          <TabBottomMenu onPress={setSelectedTabName} selectedTabName={selectedTabName} toDoList={toDoList} />
         </View>
       </SafeAreaView>
     </SafeAreaProvider>
