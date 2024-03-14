@@ -30,13 +30,13 @@ export function TabBottomMenu({ selectedTabName, onPress, toDoList }) {
     <View style={styles.container}>
       <View style={styles.filterBox}>
         <TouchableOpacity style={styles.button} onPress={() => onPress("all")}>
-          <Text style={getTextStyle("all")}>All ({countByStatus.all})</Text>
+          <Text style={getTextStyle("all")}>Tous ({countByStatus.all})</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => onPress("inProgress")}>
-          <Text style={getTextStyle("inProgress")}>In progress ({countByStatus.inProgress})</Text>
+          <Text style={getTextStyle("inProgress")}>En cours ({countByStatus.inProgress})</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={() => onPress("done")}>
-          <Text style={getTextStyle("done")}>Done ({countByStatus.done})</Text>
+          <Text style={getTextStyle("done")}>Terminé ({countByStatus.done})</Text>
         </TouchableOpacity>
       </View>
     </View>
