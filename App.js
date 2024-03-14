@@ -143,7 +143,7 @@ export default function App() {
       </SafeAreaView>
       <Dialog.Container visible={isAddDialogVisible} onBackdropPress={() => setIsAddDialogVisible(false)}>
         <Dialog.Title>Créer une tâche</Dialog.Title>
-        <Dialog.Description>Choisi un nom pour la nouvelle tâche</Dialog.Description>
+        <Dialog.Description>Choisissez un nom pour la nouvelle tâche</Dialog.Description>
         <Dialog.Input onChangeText={setDialogInputValue} />
         <Dialog.Button disabled={dialogInputValue.trim().length === 0} label="Créer" onPress={addTodo} />
       </Dialog.Container>
