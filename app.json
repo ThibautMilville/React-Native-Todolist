@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "react-native-todolist",
-    "slug": "react-native-todolist",
+    "slug": "todo-list",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,10 +21,23 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.thybow.todolist"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "072553f0-adaa-4e63-88ba-1a41ff34249c"
+      }
+    },
+    "owner": "thybow",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/072553f0-adaa-4e63-88ba-1a41ff34249c"
     }
   }
 }
