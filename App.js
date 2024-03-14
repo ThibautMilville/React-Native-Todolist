@@ -1,11 +1,15 @@
 import React, { useState } from "react";
 import { View, ScrollView, Alert } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
+import Dialog from "react-native-dialog";
+import uuid from "react-native-uuid";
+// Styles
 import { styles } from "./assets/css/app.style";
 // Components
 import { Header } from "./components/Header/Header";
 import { CardToDo } from "./components/CardToDo/CardToDo";
 import { TabBottomMenu } from "./components/TabBottomMenu/TabBottomMenu";
+import { ButtonAdd } from "./components/ButtonAdd/ButtonAdd";
 
 export default function App() {
   const [toDoList, setToDoList] = useState([
@@ -19,6 +23,8 @@ export default function App() {
     { id: 8, title: "Appeler le vétérinaire", isCompleted: true },
   ]);
   const [selectedTabName, setSelectedTabName] = useState("all");
+  const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
+  const [dialogInputValue, setDialogInputValue] = useState("");
 
   // Render the filtered list of todos according to the selected tab
   function renderToDoList() {
@@ -68,6 +74,20 @@ export default function App() {
     }
   }
 
+  function showAddDialog() {
+    setIsAddDialogVisible(true);
+  }
+  
+  function addTodo() {
+    const newTodo = {
+      id: uuid.v4(),
+      title: dialogInputValue,
+      isCompleted: false,
+    };
+    setToDoList([...toDoList, newTodo]);
+    setIsAddDialogVisible(false);
+  }
+
   return (
     <SafeAreaProvider>
       <SafeAreaView style={styles.app}>
@@ -76,11 +96,18 @@ export default function App() {
         </View>
         <View style={styles.body}>
           <ScrollView>{renderToDoList()}</ScrollView>
+          <ButtonAdd onPress={showAddDialog} />
         </View>
         <View style={styles.footer}>
           <TabBottomMenu onPress={setSelectedTabName} selectedTabName={selectedTabName} toDoList={toDoList} />
         </View>
       </SafeAreaView>
+      <Dialog.Container visible={isAddDialogVisible} onBackdropPress={() => setIsAddDialogVisible(false)}>
+        <Dialog.Title>Créer une tâche</Dialog.Title>
+        <Dialog.Description>Choisi un nom pour la nouvelle tâche</Dialog.Description>
+        <Dialog.Input onChangeText={setDialogInputValue} />
+        <Dialog.Button disabled={dialogInputValue.trim().length === 0} label="Créer" onPress={addTodo} />
+      </Dialog.Container>
     </SafeAreaProvider>
   );
 }
