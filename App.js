@@ -3,6 +3,7 @@ import { View, ScrollView, Alert } from "react-native";
 import { SafeAreaView, SafeAreaProvider } from "react-native-safe-area-context";
 import Dialog from "react-native-dialog";
 import uuid from "react-native-uuid";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 // Styles
 import { styles } from "./assets/css/app.style";
 // Components
@@ -12,6 +13,7 @@ import { TabBottomMenu } from "./components/TabBottomMenu/TabBottomMenu";
 import { ButtonAdd } from "./components/ButtonAdd/ButtonAdd";
 
 export default function App() {
+  // States
   const [toDoList, setToDoList] = useState([
     { id: 1, title: "Sortir le chien", isCompleted: true },
     { id: 2, title: "Aller chez le garagiste", isCompleted: false },
@@ -25,6 +27,16 @@ export default function App() {
   const [selectedTabName, setSelectedTabName] = useState("all");
   const [isAddDialogVisible, setIsAddDialogVisible] = useState(false);
   const [dialogInputValue, setDialogInputValue] = useState("");
+  const [isFirstRender, setIsFirstRender] = useState(true);
+
+  // Variables
+  let isLoadUpdate = false;
+
+  // Load the toDoList array from the AsyncStorage only once at the first render
+  if (isFirstRender) {
+    loadTodoList();
+    setIsFirstRender(false);
+  }
 
   // Render the filtered list of todos according to the selected tab
   function renderToDoList() {
@@ -74,18 +86,45 @@ export default function App() {
     }
   }
 
+  // Show dialog to add a new task
   function showAddDialog() {
     setIsAddDialogVisible(true);
   }
-  
-  function addTodo() {
+
+  // Add a new task to the toDoList array
+  async function addTodo() {
     const newTodo = {
       id: uuid.v4(),
       title: dialogInputValue,
       isCompleted: false,
     };
-    setToDoList([...toDoList, newTodo]);
+    const updatedTodoList = [...toDoList, newTodo];
+    setToDoList(updatedTodoList);
+    await saveTodoList(updatedTodoList);
     setIsAddDialogVisible(false);
+  }
+
+  // Save the toDoList array in the AsyncStorage
+  async function saveTodoList(updatedTodoList) {
+    try {
+      await AsyncStorage.setItem("@todolist", JSON.stringify(updatedTodoList));
+    } catch (err) {
+      alert("Erreur " + err);
+    }
+  }
+
+  // Load the toDoList array from the AsyncStorage
+  async function loadTodoList() {
+    try {
+      const stringifiedTodoList = await AsyncStorage.getItem("@todolist");
+      if (stringifiedTodoList !== null) {
+        const parsedTodoList = JSON.parse(stringifiedTodoList);
+        isLoadUpdate = true;
+        setToDoList(parsedTodoList);
+      }
+    } catch (err) {
+      alert("Erreur " + err);
+    }
   }
 
   return (
